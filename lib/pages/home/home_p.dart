@@ -20,22 +20,32 @@ enum SortType {
   ageDown,
   ageUp,
 }
+enum CurrentListType {
+  fitred,
+  search,
+}
 
 class HomePState extends State<HomeP> {
   final _myStream = StreamController.broadcast();
   final _controller = ScrollController();
-  final list = <User>[];
+  final _searchControler = TextEditingController();
+  final listFull = <User>[];
   List<User> listFiltred = <User>[];
+  List<User> searchedList = <User>[];
   bool _isLoading = false;
   bool _checkedMale = true;
   bool _checkedFemale = true;
+  bool _isSearch = false;
   int countUsers = 0;
   SortType _sortTipe = SortType.nameDown;
+
+  String _searchQuery = '';
 
   @override
   void initState() {
     super.initState();
     _getUsers();
+
     _addListnerToScroll();
   }
 
@@ -43,15 +53,15 @@ class HomePState extends State<HomeP> {
     _isLoading = true;
     _myStream.add(null);
     final listUsers = await getData();
-    list.addAll(listUsers);
-
+    listFull.addAll(listUsers);
+    _searchUser();
     _onFiltredList();
     _isLoading = false;
     _myStream.add(null);
   }
 
   void _onFiltredList() {
-    listFiltred = list.where((user) {
+    listFiltred = listFull.where((user) {
       if ((user.gender == 'male') && _checkedMale) {
         return true;
       } else if ((user.gender == 'female') && _checkedFemale) {
@@ -70,6 +80,13 @@ class HomePState extends State<HomeP> {
           _getUsers();
         }
       }
+    });
+  }
+
+  void _searchUser() {
+    _searchControler.addListener(() {
+      _searchQuery = _searchControler.text;
+      _myStream.add(null);
     });
   }
 
@@ -108,8 +125,8 @@ class HomePState extends State<HomeP> {
     return Scaffold(
       backgroundColor: Colors.grey,
       body: SafeArea(child: _buildContent()),
-      // floatingActionButton: _buildFloatBatton(),
-      // bottomNavigationBar: _buildBottomSheet(),
+      //floatingActionButton: _buildFloatBatton(),
+      //bottomNavigationBar: _buildBottomSheet(),
     );
   }
 
@@ -194,7 +211,7 @@ class HomePState extends State<HomeP> {
                 ),
                 IconButton(
                   onPressed: () {
-                    list.clear();
+                    listFull.clear();
                     setState(() {
                       _checkedMale = true;
                       _checkedFemale = true;
@@ -210,116 +227,102 @@ class HomePState extends State<HomeP> {
             ),
           ),
           Container(
-            height: 50,
+            height: 80,
             color: Colors.blue,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                StreamBuilder<dynamic>(
-                    stream: _myStream.stream,
-                    builder: (context, snapshot) {
-                      return ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          primary: [SortType.nameDown, SortType.nameUp]
-                                  .contains(_sortTipe)
-                              ? Colors.red
-                              : Colors.blue,
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    primary:
+                        [SortType.nameDown, SortType.nameUp].contains(_sortTipe)
+                            ? Colors.red
+                            : Colors.blue,
+                  ),
+                  onPressed: tapButtonName,
+                  child: Row(
+                    children: [
+                      Icon([SortType.nameDown].contains(_sortTipe)
+                          ? Icons.arrow_downward
+                          : Icons.arrow_upward),
+                      const SizedBox(width: 20),
+                      const Text(
+                        'Name',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
                         ),
-                        onPressed: tapButtonName,
-                        child: Row(
-                          children: [
-                            Icon([SortType.nameDown].contains(_sortTipe)
-                                ? Icons.arrow_downward
-                                : Icons.arrow_upward),
-                            SizedBox(width: 20),
-                            const Text(
-                              'Name',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
+                      ),
+                    ],
+                  ),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    primary:
+                        [SortType.ageDown, SortType.ageUp].contains(_sortTipe)
+                            ? Colors.red
+                            : Colors.blue,
+                  ),
+                  onPressed: tapButtonAge,
+                  child: Row(
+                    children: [
+                      Icon([SortType.ageDown].contains(_sortTipe)
+                          ? Icons.arrow_downward
+                          : Icons.arrow_upward),
+                      const SizedBox(width: 20),
+                      const Text(
+                        'Age',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
                         ),
-                      );
-                    }),
-                StreamBuilder<dynamic>(
-                    stream: _myStream.stream,
-                    builder: (context, snapshot) {
-                      return ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          primary: [SortType.ageDown, SortType.ageUp]
-                                  .contains(_sortTipe)
-                              ? Colors.red
-                              : Colors.blue,
-                        ),
-                        onPressed: tapButtonAge,
-                        child: Row(
-                          children: [
-                            Icon([SortType.ageDown].contains(_sortTipe)
-                                ? Icons.arrow_downward
-                                : Icons.arrow_upward),
-                            const SizedBox(width: 20),
-                            const Text(
-                              'Age',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }),
+                      ),
+                    ],
+                  ),
+                ),
+                IconButton(
+                  onPressed: () {
+                    if (_isSearch) {
+                      _searchControler.text = '';
+                    }
+                    _isSearch = !_isSearch;
+                    _myStream.add(null);
+                  },
+                  icon: Icon(
+                    _isSearch ? Icons.search_off : Icons.search,
+                    color: Colors.white,
+                    size: 35,
+                  ),
+                ),
               ],
             ),
-          )
+          ),
+          if (_isSearch)
+            Container(
+              height: 60,
+              padding: const EdgeInsets.all(8.0),
+              color: Colors.white,
+              child: TextField(
+                controller: _searchControler,
+                decoration: InputDecoration(
+                  labelText: 'Search',
+                  labelStyle: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  filled: true,
+                  fillColor: Colors.white.withAlpha(235),
+                  border: const OutlineInputBorder(),
+                ),
+              ),
+            )
         ],
       ),
     );
   }
 
-  // Icon _buildFloatBatton() {
-  //   return const Icon(Icons.ac_unit);
-  // }
-
-  // Widget _buildBottomSheet() {
-  //   return Container(
-  //     height: 75,
-  //     color: Colors.lightBlueAccent,
-  //   );
-  // }
-
   Widget _buildListUsers() {
-    // final List<User> listFilter = <User>[];
-
-// //Первый способ отобрать женщин и мужчин
-//     for (var user in list) {
-//       final isMale = user.gender == 'male';
-//       final isFemale = user.gender == 'female';
-//       if (isMale && _checkedMale) {
-//         listFilter.add(user);
-//       } else if (isFemale && _checkedFemale) {
-//         listFilter.add(user);
-//       }
-//     }
-
-//     if (countUsers != listFilter.length) {
-//       setState(() {});
-//       countUsers = listFilter.length;
-//     }
-
-// //Второй способ
-
-    // final newList = list.where((user) {
-    //   if ((user.gender == 'male') && _checkedMale) {
-    //     return true;
-    //   } else if ((user.gender == 'female') && _checkedFemale) {
-    //     return true;
-    //   }
-    //   return false;
-    // });
-
+    List<User> _tempList = [];
     switch (_sortTipe) {
       case SortType.nameDown:
         listFiltred.sort((a, b) => (a.name).compareTo(b.name));
@@ -336,11 +339,19 @@ class HomePState extends State<HomeP> {
       default:
     }
 
+    if (_searchQuery.isNotEmpty) {
+      _tempList = listFiltred.where((user) {
+        return user.name.toLowerCase().contains(_searchQuery.toLowerCase());
+      }).toList();
+    } else {
+      _tempList = listFiltred;
+    }
+
     return Expanded(
       child: ListView(
         padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
         controller: _controller,
-        children: listFiltred.map((e) {
+        children: _tempList.map((e) {
           return _buildButtonOpenUser(e);
         }).toList(),
       ),

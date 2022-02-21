@@ -1,13 +1,15 @@
 import 'dart:developer';
+import 'package:http/http.dart' as v;
 
 import 'package:dio/dio.dart';
 import 'package:random_user/pages/home/home_p.dart';
 import 'package:random_user/pages/home/models/model.dart';
 
-const url = 'http://randomuser.me/api/?results=15';
+const url = 'https://randomuser.me/api/?results=15';
 Future<List<User>> getData() async {
   final List<User> listUsers = [];
-  //final hTtp = await v.get(Uri.parse(url));
+  // final hTtp = await v.get(Uri.parse(url));
+
   final response = await Dio().get(url);
   final data = response.data as Map<String, dynamic>?;
   await Future.delayed(const Duration(seconds: 1));
