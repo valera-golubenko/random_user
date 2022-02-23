@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:random_user/pages/bottom_sheet/bottom_sheet_p.dart';
 import 'package:random_user/pages/home/home_p.dart';
 
 void main() {
@@ -12,7 +13,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: HomeP(),
+      home: BottomSheetCustom(),
     );
   }
 }

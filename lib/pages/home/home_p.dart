@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:random_user/pages/details_user/details_user.dart';
+import 'package:random_user/pages/map/map_p.dart';
+import 'package:random_user/pages/weather/weather_p.dart';
 
 import 'models/model.dart';
 import 'network_api/network_api.dart';
@@ -125,8 +127,6 @@ class HomePState extends State<HomeP> {
     return Scaffold(
       backgroundColor: Colors.grey,
       body: SafeArea(child: _buildContent()),
-      //floatingActionButton: _buildFloatBatton(),
-      //bottomNavigationBar: _buildBottomSheet(),
     );
   }
 
