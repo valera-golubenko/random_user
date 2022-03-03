@@ -12,7 +12,7 @@ class BottomSheetCustom extends StatefulWidget {
 
 class _BottomSheetCustomState extends State<BottomSheetCustom> {
   int _selectedTab = 0;
-  static const List<Widget> _widgetOptions = <Widget>[
+  final List<Widget> _widgetOptions = const <Widget>[
     HomeP(),
     MapP(),
     WeatherP(),
