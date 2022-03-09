@@ -32,6 +32,8 @@ dependencies:
   dio: ^4.0.4
   http: ^0.13.4
   google_maps_flutter: ^2.1.1
+  geolocator: ^8.2.0
+  
   
 
   # The following adds the Cupertino Icons font to your application.
@@ -48,6 +50,8 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^1.0.0
+  # flutter pub run change_app_package_name:main com.h2v.random_user
+  change_app_package_name: ^1.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

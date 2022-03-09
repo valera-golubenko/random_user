@@ -24,6 +24,10 @@ Future<List<User>> getData() async {
       final String gender = user['gender'] ?? 'no gender';
       final String urlmaximg = user['picture']['large'] ?? 'no url';
       final String urlminimg = user['picture']['thumbnail'] ?? 'no url';
+      final String latitude =
+          user['location']['coordinates']['latitude'] ?? "0.0";
+      final String longitude =
+          user['location']['coordinates']['longitude'] ?? "0.0";
 
       final _user = User(
         name: name,
@@ -34,6 +38,8 @@ Future<List<User>> getData() async {
         gender: gender,
         urlmaximg: urlmaximg,
         urlminimg: urlminimg,
+        latitude: double.parse(latitude),
+        longitude: double.parse(longitude),
       );
 
       listUsers.add(_user);

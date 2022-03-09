@@ -10,7 +10,8 @@ import 'models/model.dart';
 import 'network_api/network_api.dart';
 
 class HomeP extends StatefulWidget {
-  const HomeP({Key? key}) : super(key: key);
+  final StreamController<List<User>> usersPaser;
+  const HomeP({Key? key, required this.usersPaser}) : super(key: key);
 
   @override
   HomePState createState() => HomePState();
@@ -346,7 +347,7 @@ class HomePState extends State<HomeP> {
     } else {
       _tempList = listFiltred;
     }
-
+    widget.usersPaser.add(_tempList);
     return Expanded(
       child: ListView(
         padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),

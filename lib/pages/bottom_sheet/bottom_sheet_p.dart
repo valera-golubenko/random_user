@@ -1,7 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:random_user/pages/home/home_p.dart';
 import 'package:random_user/pages/map/map_p.dart';
 import 'package:random_user/pages/weather/weather_p.dart';
+
+import '../home/models/model.dart';
 
 class BottomSheetCustom extends StatefulWidget {
   const BottomSheetCustom({Key? key}) : super(key: key);
@@ -12,11 +16,14 @@ class BottomSheetCustom extends StatefulWidget {
 
 class _BottomSheetCustomState extends State<BottomSheetCustom> {
   int _selectedTab = 0;
-  final List<Widget> _widgetOptions = const <Widget>[
-    HomeP(),
-    MapP(),
-    WeatherP(),
-  ];
+  final _usersPaser = StreamController<List<User>>.broadcast();
+  List<User> usersMap = [];
+
+  List<Widget> _widgetOptions() => <Widget>[
+        HomeP(usersPaser: _usersPaser),
+        MapP(usersMap: usersMap),
+        const WeatherP(),
+      ];
   _buildBottomSheet() {
     return BottomNavigationBar(
       selectedItemColor: Colors.black,
@@ -50,9 +57,18 @@ class _BottomSheetCustomState extends State<BottomSheetCustom> {
   }
 
   @override
+  void initState() {
+    super.initState();
+
+    _usersPaser.stream.listen((list) {
+      usersMap = list;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _widgetOptions[_selectedTab],
+      body: _widgetOptions()[_selectedTab],
       bottomNavigationBar: _buildBottomSheet(),
     );
   }

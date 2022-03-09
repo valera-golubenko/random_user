@@ -7,6 +7,8 @@ class User {
   final String gender;
   final String urlmaximg;
   final String urlminimg;
+  final double latitude;
+  final double longitude;
 
   User({
     required this.name,
@@ -17,5 +19,7 @@ class User {
     required this.gender,
     required this.urlmaximg,
     required this.urlminimg,
+    required this.latitude,
+    required this.longitude,
   });
 }
